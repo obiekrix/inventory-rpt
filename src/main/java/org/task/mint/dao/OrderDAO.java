@@ -1,20 +1,15 @@
 package org.task.mint.dao;
 
 import org.task.mint.entity.Order;
+import org.task.mint.model.OrderRpt;
 
 import java.util.List;
 
 
 public interface OrderDAO {
 	
-	List<Order> getOrders(String start, String end);
+	List<OrderRpt> getOrdersByDateRange(String start, String end);
 
-	void saveOrder(Order theOrder);
-
-	void updateOrder(Order theOrder);
-	
 	Order getOrder(int theId);
-
-	void deleteOrder(int theId);
 
 }

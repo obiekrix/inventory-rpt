@@ -9,7 +9,12 @@ import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.task.mint.entity.Order;
+import org.task.mint.model.OrderRpt;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -42,48 +47,23 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     @Override
-    public List<Order> getOrdersByDateRange(String start, String end) {
+    public List<OrderRpt> getOrdersByDateRange(String start, String end) {
         // TODO Auto-generated method stub
 
-        // get the current hibernate session
         init();
 
         // create a query ... sort by name
-        Query<Order> theQuery = currentSession.createQuery("from Order as o where o.timeOfSale between " + start + " and " + end, Order.class);
+        Query<OrderRpt> theQuery = currentSession.createQuery("SELECT NEW org.task.mint.model.OrderRpt(o.timeOfSale as date, count(*) as total_order, sum(op.soldPrice) as total_order_amount) " +
+                        "FROM Order as o INNER JOIN o.orderedProducts op " +
+                        "WHERE o.timeOfSale BETWEEN '" + start + "' AND '" + end + "' " +
+                        "GROUP BY o.timeOfSale",
+                OrderRpt.class);
 
         // execute query and get result list
-        List<Order> orders = theQuery.getResultList();
+        List<OrderRpt> orders = theQuery.getResultList();
 
         // return the results
         return orders;
-    }
-
-    @Override
-    public void saveOrder(Order theOrder) {
-        // TODO Auto-generated method stub
-
-        // get the current hibernate session
-        init();
-
-        // save the order
-        currentSession.save(theOrder);
-    }
-
-    @Override
-    public void updateOrder(Order theOrder) {
-        // TODO Auto-generated method stub
-
-        // get the current hibernate session
-        init();
-
-        // update the order
-        currentSession.update(theOrder);
-    }
-
-    @Override
-    public void deleteOrder(int theId) {
-        // TODO Auto-generated method stub
-
     }
 
 }
